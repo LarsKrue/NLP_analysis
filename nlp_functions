@@ -1,0 +1,92 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Jun  4 15:12:59 2020
+
+@author: Lars Krüger
+"""
+
+
+import os
+import re
+import pandas as pd
+import requests
+import json
+from bs4 import BeautifulSoup #screen scraping web dokumente
+
+
+
+#read in plain text file
+def read_plain_text(path="data", file="hieroglyph.txt"):
+    with open(os.path.join(path,file),"r") as file:
+        text = file.read()
+    return text
+
+def extract_columns_from_dataframe(path="data", file="news.csv"):
+    # read from csv file
+    df = pd.read_csv(os.path.join(path, file), header=0, dtype="str")
+    print(df.head())
+    print("Column titles: ", df.columns.values)
+    print("Shape: {} rows - {} columns ".format(df.shape[0],df.shape[1]))
+    
+    #convert to lower case
+    
+    #df["title"] = df["title"].str.lower()
+    #print(df["title"])
+    #df.head()
+    return df
+
+def get_text_from_online(adress="https://quotes.rest/qod.json"):
+    # fetch from REST API
+    r = requests.get(adress)
+    res = r.json()
+    text = json.dumps(res, indent=4)
+    
+    print(type(text))
+    q = res["contents"]["quotes"][0]
+    print(q["quote"], "\n--", q["author"])
+    return text
+
+def get_text_fom_webpage(adress="https://news.ycombinator.com"):
+    # fetch a webpage,  complete HTML code
+    r=requests.get(adress) # html text
+    html_text = r.text
+    print(html_text)
+    return html_text
+
+def clean_html_regex(html_text):
+    pattern = re.compile(r"<.*?>")
+    clean_html = pattern.sub('',html_text)
+    print(clean_html)
+    return(clean_html)
+
+def clean_html_soup(html_text):
+    soup = BeautifulSoup(html_text, "html5lib")
+    clean_html = soup.get_text()
+    print(clean_html)
+    return clean_html
+
+
+    
+    
+
+
+
+#------------------------------------------------------------------------------
+
+def main():
+    # extract_columns_from_dataframe(path="data", file="news.csv")
+    # get_text_from_online()
+    html_text = get_text_fom_webpage()
+    #clean_html_regex(html_text)    
+    clean_html_soup(html_text)
+    return None
+    
+    
+
+
+
+
+
+if __name__ == "__main__":
+    main()
+
