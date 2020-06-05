@@ -1,0 +1,36 @@
+import pandas as pd
+import re # regular expressions
+import collections as c
+import pprint
+
+
+#-----------------------Bag of Words / word frequency in a text----------------
+# treats each word individually
+# word order does not matter
+
+# example from scratch
+
+documents = ['Hello, how are you!',
+             'Win money, win from home.',
+             'Call me now.',
+             'Hello, Call hello you tomorrow?']
+
+# normalization
+lower_case_documents = [document.lower() for document in documents]
+#print(lower_case_documents)
+
+# remove punctuation characters
+sans_punctuation_documents = [re.sub(r"[^a-zA-Z0-9]", " ", document) for document in lower_case_documents]
+#print(sans_punctuation_documents)
+
+#tokenization
+preprocessed_documents = [document.split() for document in sans_punctuation_documents]
+#print(preprocessed_documents)
+
+
+# word count je document
+frequency_list=[]
+for doc in preprocessed_documents:
+    frequency_list.append(c.Counter(doc))
+
+pprint.pprint(frequency_list)
